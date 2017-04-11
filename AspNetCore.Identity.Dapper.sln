@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.9
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2B71EADE-3586-4448-908B-F1D5EA102C71}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8AA097FC-6D1D-49A2-A07A-508DD7DF22A6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.Identity.Dapper", "src\AspNetCore.Identity.Dapper\AspNetCore.Identity.Dapper.csproj", "{7EDC933E-97D7-450B-9656-83852DA7F4FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7EDC933E-97D7-450B-9656-83852DA7F4FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EDC933E-97D7-450B-9656-83852DA7F4FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EDC933E-97D7-450B-9656-83852DA7F4FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EDC933E-97D7-450B-9656-83852DA7F4FC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7EDC933E-97D7-450B-9656-83852DA7F4FC} = {2B71EADE-3586-4448-908B-F1D5EA102C71}
+	EndGlobalSection
+EndGlobal
