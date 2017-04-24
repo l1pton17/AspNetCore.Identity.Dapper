@@ -104,11 +104,11 @@ namespace AspNetCore.Identity.Dapper.Repositories
             return SetPropertyAsync(user.Id, nameof(IdentityUser.LockoutEnabled), enabled);
         }
 
-        public Task SetLockoutEndDateAsync(TUser user, DateTimeOffset? lockoutEnd)
+        public Task SetLockoutEndDateAsync(TUser user, DateTime? lockoutEndUtc)
         {
-            user.LockoutEnd = lockoutEnd;
+            user.LockoutEndUtc = lockoutEndUtc;
 
-            return SetPropertyAsync(user.Id, nameof(IdentityUser.LockoutEnd), lockoutEnd);
+            return SetPropertyAsync(user.Id, nameof(IdentityUser.LockoutEndUtc), lockoutEndUtc);
         }
 
         public Task IncrementAccessFailedCountAsync(TKey id)

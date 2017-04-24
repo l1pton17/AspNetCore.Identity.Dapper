@@ -42,7 +42,10 @@ namespace AspNetCore.Identity.Dapper
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return Task.FromResult(user.LockoutEnd);
+            return Task.FromResult(
+                user.LockoutEndUtc.HasValue
+                    ? new DateTimeOffset(DateTime.SpecifyKind(user.LockoutEndUtc.Value, DateTimeKind.Utc))
+                    : (DateTimeOffset?)null);
         }
 
         public virtual async Task<int> IncrementAccessFailedCountAsync(TUser user, CancellationToken cancellationToken = default(CancellationToken))
@@ -98,7 +101,7 @@ namespace AspNetCore.Identity.Dapper
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return _userRepository.SetLockoutEndDateAsync(user, lockoutEnd);
+            return _userRepository.SetLockoutEndDateAsync(user, lockoutEnd?.UtcDateTime);
         }
     }
 }

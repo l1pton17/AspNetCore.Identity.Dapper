@@ -99,7 +99,7 @@ namespace AspNetCore.Identity.Dapper
         /// <remarks>
         /// A value in the past means the user is not locked out.
         /// </remarks>
-        public virtual DateTimeOffset? LockoutEnd { get; set; }
+        public virtual DateTime? LockoutEndUtc { get; set; }
 
         /// <summary>
         /// Gets or sets a flag indicating if the user could be locked out.
