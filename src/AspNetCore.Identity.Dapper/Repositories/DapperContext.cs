@@ -7,6 +7,7 @@ using Dapper.Contrib.Extensions;
 
 namespace AspNetCore.Identity.Dapper.Repositories
 {
+    public class DapperContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken> : IDapperContext
         where TUser : IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin>
         where TRole : IdentityRole<TKey, TUserRole, TRoleClaim>
         where TKey : IEquatable<TKey>
