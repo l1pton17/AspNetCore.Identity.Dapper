@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +10,74 @@ using Microsoft.AspNetCore.Identity;
 
 namespace AspNetCore.Identity.Dapper
 {
+    public class UserStore : UserStore<IdentityUser<string>>
+    {
+        public UserStore(IdentityErrorDescriber describer = null) : base(describer) { }
+    }
+
+    public class UserStore<TUser> : UserStore<TUser, IdentityRole, string>
+        where TUser : IdentityUser<string>, new()
+    {
+        public UserStore(IdentityErrorDescriber describer = null) : base(describer) { }
+    }
+
+    public class UserStore<TUser, TRole> : UserStore<TUser, TRole, string>
+        where TUser : IdentityUser<string>
+        where TRole : IdentityRole<string>
+    {
+        public UserStore(IdentityErrorDescriber describer = null) : base(describer) { }
+    }
+
+    public class UserStore<TUser, TRole, TKey> :
+        UserStore<TUser, TRole, TKey, IdentityUserClaim<TKey>, IdentityUserRole<TKey>, IdentityUserLogin<TKey>, IdentityUserToken<TKey>, IdentityRoleClaim<TKey>>
+        where TUser : IdentityUser<TKey>
+        where TRole : IdentityRole<TKey>
+        where TKey : IEquatable<TKey>
+    {
+        public UserStore(IdentityErrorDescriber describer = null)
+            : base(describer)
+        { }
+
+        protected override IdentityUserRole<TKey> CreateUserRole(TUser user, TRole role)
+        {
+            return new IdentityUserRole<TKey>
+            {
+                UserId = user.Id,
+                RoleId = role.Id
+            };
+        }
+
+        protected override IdentityUserClaim<TKey> CreateUserClaim(TUser user, Claim claim)
+        {
+            var userClaim = new IdentityUserClaim<TKey> { UserId = user.Id };
+            userClaim.InitializeFromClaim(claim);
+
+            return userClaim;
+        }
+
+        protected override IdentityUserToken<TKey> CreateUserToken(TUser user, string loginProvider, string name, string value)
+        {
+            return new IdentityUserToken<TKey>
+            {
+                UserId = user.Id,
+                LoginProvider = loginProvider,
+                Name = name,
+                Value = value
+            };
+        }
+
+        protected override IdentityUserLogin<TKey> CreateUserLogin(TUser user, UserLoginInfo login)
+        {
+            return new IdentityUserLogin<TKey>
+            {
+                UserId = user.Id,
+                LoginProvider = login.LoginProvider,
+                ProviderKey = login.ProviderKey,
+                ProviderDisplayName = login.ProviderDisplayName
+            };
+        }
+    }
+
     public abstract partial class UserStore<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken, TRoleClaim>
         where TKey : IEquatable<TKey>
         where TUser : IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin, TUserToken>

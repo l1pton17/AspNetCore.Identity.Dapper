@@ -42,15 +42,6 @@ namespace AspNetCore.Identity.Dapper.Repositories
                 new {UserId = userId});
         }
 
-        public Task<bool> ExistsAsync(TKey userId, TKey roleId)
-        {
-            return DbManager.Connection.QueryFirstAsync<bool>(
-                $@"SELECT COUNT(1)
-                   FROM {TableName}
-                   WHERE UserId=@UserId AND RoleId=@RoleId",
-                new {UserId = userId, RoleId = roleId});
-        }
-
         public Task UpdateAsync(TKey userId, Claim claim, Claim newClaim)
         {
             return DbManager.Connection.ExecuteAsync(
