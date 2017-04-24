@@ -45,6 +45,11 @@ namespace AspNetCore.Identity.Dapper.Repositories
             return SetPropertyAsync(id, nameof(IdentityUser.PhoneNumberConfirmed), confirmed);
         }
 
+        public Task SetSecurityStamp(TKey id, string stamp)
+        {
+            return SetPropertyAsync(id, nameof(IdentityUser.SecurityStamp), stamp);
+        }
+
         private Task SetPropertyAsync<T>(TKey id, string propertyName, T propertyValue)
         {
             return _database.Connection.ExecuteAsync(
