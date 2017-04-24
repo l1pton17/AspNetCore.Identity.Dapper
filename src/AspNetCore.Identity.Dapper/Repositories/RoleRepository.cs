@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dapper;
+using Dapper.Contrib.Extensions;
 
 namespace AspNetCore.Identity.Dapper.Repositories
 {
@@ -11,42 +12,41 @@ namespace AspNetCore.Identity.Dapper.Repositories
         where TRoleClaim : IdentityRoleClaim<TKey>
     {
         private readonly DbManager _database;
+        //TODO: remove in a refactoring stage
+        public string TableName { get; } = "Roles";
 
         public RoleRepository(DbManager database)
         {
             _database = database;
         }
 
-        public void Add(TRole role)
+        public Task InsertAsync(TRole role)
         {
-            _database.Connection.ExecuteAsync(
-                "INSERT INTO Role (Id, Name, NormalizedName, ConcurrencyStamp) values (@Id, @Name, @NormalizedName, @ConcurrencyStamp",
-                new
-                {
-                    Id = role.Id,
-                    Name = role.Name,
-                    NormalizedName = role.NormalizedName,
-                    ConcurrencyStamp = role.ConcurrencyStamp
-                });
+            return _database.Connection.InsertAsync(role);
         }
 
-        public async Task<TRole> GetRoleByNameAsync(string roleName)
+        public Task DeleteAsync(TRole role)
         {
-            var roleId = await GetRoleIdAsync(roleName);
-
-            if (!roleId.Equals(default(TKey)))
-            {
-                return new IdentityRole<TKey>(roleName);
-            }
-
-            return null;
+            return _database.Connection.DeleteAsync(role);
         }
 
-        public Task<TKey> GetRoleIdAsync(string roleName)
+        public Task<TRole> FindByNameAsync(string roleName)
         {
-            return _database.Connection.ExecuteScalarAsync<TKey>(
-                "select Id from Role where Name=@Name",
+            return _database.Connection.ExecuteScalarAsync<TRole>(
+                $"SELECT * FROM {TableName} WHERE Name=@name",
                 new {Name = roleName});
+        }
+
+        public Task<TRole> FindByIdAsync(TKey roleId)
+        {
+            return _database.Connection.ExecuteScalarAsync<TRole>(
+                $"SELECT * FROM {TableName} WHERE Id=@Id",
+                new {Id = roleId});
+        }
+
+        public Task UpdateAsync(TRole role)
+        {
+            return _database.Connection.UpdateAsync(role);
         }
     }
 }

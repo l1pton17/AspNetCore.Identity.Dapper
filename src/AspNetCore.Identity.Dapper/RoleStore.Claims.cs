@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,29 +8,67 @@ using Microsoft.AspNetCore.Identity;
 
 namespace AspNetCore.Identity.Dapper
 {
-    partial class RoleStore<TRole, TKey, TUserRole, TRoleClaim>
+    partial class RoleStore<TRole, TKey, TUserRole, TRoleClaim> : IRoleClaimStore<TRole>
     {
-
-        public Task GetClaimsAsync(TRole role, CancellationToken cancellationToken = new CancellationToken())
+        public virtual async Task<IList<Claim>> GetClaimsAsync(TRole role, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (role == null)
+            {
+                throw new ArgumentNullException(nameof(role));
+            }
+
+            return (await _roleClaimRepository.FindByRoleIdAsync(role.Id))
+                .Select(v => v.ToClaim())
+                .ToList();
         }
 
-        public Task AddClaimAsync(TRole role, System.Security.Claims.Claim claim,
-            CancellationToken cancellationToken = new CancellationToken())
+        public Task AddClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken = new CancellationToken())
         {
-            throw new System.NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (role == null)
+            {
+                throw new ArgumentNullException(nameof(role));
+            }
+
+            if (claim == null)
+            {
+                throw new ArgumentNullException(nameof(claim));
+            }
+
+            return _roleClaimRepository.InsertAsync(CreateRoleClaim(role, claim));
         }
 
-        public Task RemoveClaimAsync(TRole role, System.Security.Claims.Claim claim,
-            CancellationToken cancellationToken = new CancellationToken())
+        public Task RemoveClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken = new CancellationToken())
         {
-            throw new System.NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (role == null)
+            {
+                throw new ArgumentNullException(nameof(role));
+            }
+
+            if (claim == null)
+            {
+                throw new ArgumentNullException(nameof(claim));
+            }
+
+            return _roleClaimRepository.RemoveClaimAsync(role.Id, claim);
         }
 
-        Task<IList<Claim>> IRoleClaimStore<TRole>.GetClaimsAsync(TRole role, CancellationToken cancellationToken)
+        protected virtual TRoleClaim CreateRoleClaim(TRole role, Claim claim)
         {
-            throw new NotImplementedException();
+            return new TRoleClaim
+            {
+                RoleId = role.Id,
+                ClaimType = claim.Type,
+                ClaimValue = claim.Value
+            };
         }
     }
 }

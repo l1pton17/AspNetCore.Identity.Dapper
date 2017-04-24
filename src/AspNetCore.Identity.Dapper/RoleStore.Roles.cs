@@ -1,101 +1,165 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using AspNetCore.Identity.Dapper.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Internal;
 
 namespace AspNetCore.Identity.Dapper
 {
-    public partial class RoleStore<TRole, TKey, TUserRole, TRoleClaim> :
-        IRoleStore<TRole>,
-        IRoleClaimStore<TRole>
-        where TRole : IdentityRole<TKey, TUserRole, TRoleClaim>
-        where TKey : IEquatable<TKey>
-        where TUserRole : IdentityUserRole<TKey>
-        where TRoleClaim : IdentityRoleClaim<TKey>
+    partial class RoleStore<TRole, TKey, TUserRole, TRoleClaim> :
+        IRoleStore<TRole>
     {
-        private readonly RoleRepository<TRole, TKey, TUserRole, TRoleClaim> _roleRepository;
-
-        private bool _disposed;
-
-        public RoleStore()
-        {
-            _roleRepository = new RoleRepository<TRole, TKey, TUserRole, TRoleClaim>(new DbManager(null));
-        }
-
-        public Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken)
+        public async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
 
-            if (role == null)
+            if (role == null) throw new ArgumentNullException(nameof(role));
+
+            try
             {
-                throw new ArgumentNullException(nameof(role));
+                await _roleRepository.InsertAsync(role);
+            }
+            catch (Exception)
+            {
+                return IdentityResult.Failed();
             }
 
-
-            throw new System.NotImplementedException();
+            return IdentityResult.Success;
         }
 
-        public Task<IdentityResult> UpdateAsync(TRole role, CancellationToken cancellationToken)
+        public async Task<IdentityResult> UpdateAsync(TRole role, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (role == null) throw new ArgumentNullException(nameof(role));
+
+            try
+            {
+                role.ConcurrencyStamp = Guid.NewGuid().ToString();
+                await _roleRepository.UpdateAsync(role);
+            }
+            catch (Exception)
+            {
+                return IdentityResult.Failed(ErrorDescriber.DefaultError());
+            }
+
+            return IdentityResult.Success;
         }
 
-        public Task<IdentityResult> DeleteAsync(TRole role, CancellationToken cancellationToken)
+        public async Task<IdentityResult> DeleteAsync(TRole role, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (role == null) throw new ArgumentNullException(nameof(role));
+
+            try
+            {
+                await _roleRepository.DeleteAsync(role);
+            }
+            catch (Exception)
+            {
+                return IdentityResult.Failed(ErrorDescriber.DefaultError());
+            }
+
+            return IdentityResult.Success;
         }
 
         public Task<string> GetRoleIdAsync(TRole role, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (role == null) throw new ArgumentNullException(nameof(role));
+
+            return Task.FromResult(ConvertIdToString(role.Id));
         }
 
         public Task<string> GetRoleNameAsync(TRole role, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (role == null) throw new ArgumentNullException(nameof(role));
+
+            return Task.FromResult(role.Name);
         }
 
         public Task SetRoleNameAsync(TRole role, string roleName, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (role == null) throw new ArgumentNullException(nameof(role));
+
+            role.Name = roleName;
+            return _roleRepository.UpdateAsync(role);
         }
 
         public Task<string> GetNormalizedRoleNameAsync(TRole role, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (role == null) throw new ArgumentNullException(nameof(role));
+
+            return Task.FromResult(role.NormalizedName);
         }
 
         public Task SetNormalizedRoleNameAsync(TRole role, string normalizedName, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (role == null) throw new ArgumentNullException(nameof(role));
+
+            role.NormalizedName = normalizedName;
+
+            return _roleRepository.UpdateAsync(role);
         }
 
-        public Task<TRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
+        public Task<TRole> FindByIdAsync(string id, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            var roleId = ConvertIdFromString(id);
+            return _roleRepository.FindByIdAsync(roleId);
         }
 
         public Task<TRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            return _roleRepository.FindByNameAsync(normalizedRoleName);
         }
 
-        public void Dispose()
+        public virtual TKey ConvertIdFromString(string id)
         {
-            _disposed = true;
-        }
-
-        protected void ThrowIfDisposed()
-        {
-            if (_disposed)
+            if (id == null)
             {
-                throw new ObjectDisposedException(GetType().Name);
+                return default(TKey);
             }
+
+            return (TKey) TypeDescriptor.GetConverter(typeof(TKey)).ConvertFromInvariantString(id);
+        }
+
+        public virtual string ConvertIdToString(TKey id)
+        {
+            if (id.Equals(default(TKey)))
+            {
+                return null;
+            }
+
+            return id.ToString();
         }
     }
 }
