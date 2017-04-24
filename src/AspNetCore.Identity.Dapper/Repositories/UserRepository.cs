@@ -147,5 +147,17 @@ namespace AspNetCore.Identity.Dapper.Repositories
         {
             return FindByPropertyAsync(nameof(IdentityUser.NormalizedEmail), normalizedEmail);
         }
+
+        public Task<IEnumerable<TUser>> FindByRoleIdAsync(TKey roleId)
+        {
+            string userRolesTableName = "UserRoles";
+
+            return DbManager.Connection.QueryAsync<TUser>(
+                $@"SELECT users.*
+                   FROM {TableName} users JOIN {userRolesTableName} userRoles
+                        ON users.Id = userRoles.UserId
+                   WHERE userRoles.RoleId=@RoleId",
+                new {RoleId = roleId});
+        }
     }
 }

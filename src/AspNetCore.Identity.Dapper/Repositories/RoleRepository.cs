@@ -31,6 +31,11 @@ namespace AspNetCore.Identity.Dapper.Repositories
             return FindByPropertyAsync(nameof(IdentityRole.Name), roleName);
         }
 
+        public Task<TRole> FindByNormalizedNameAsync(string normalizedRoleName)
+        {
+            return FindByPropertyAsync(nameof(IdentityRole.NormalizedName), normalizedRoleName);
+        }
+
         public Task<TRole> FindByIdAsync(TKey id)
         {
             return FindByPropertyAsync(nameof(IdentityRole.Id), id);
