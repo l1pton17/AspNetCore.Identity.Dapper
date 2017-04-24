@@ -42,7 +42,7 @@ namespace AspNetCore.Identity.Dapper
             return IdentityResult.Success;
         }
 
-        public Task<TUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
+        public virtual Task<TUser> FindByIdAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
         {
             ThrowIfInvalidState(cancellationToken);
 
@@ -51,14 +51,14 @@ namespace AspNetCore.Identity.Dapper
             return _userRepository.FindByIdAsync(id);
         }
 
-        public Task<TUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+        public virtual Task<TUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken = default(CancellationToken))
         {
             ThrowIfInvalidState(cancellationToken);
 
             return _userRepository.FindByNameAsync(normalizedUserName);
         }
 
-        public Task<string> GetNormalizedUserNameAsync(TUser user, CancellationToken cancellationToken)
+        public virtual Task<string> GetNormalizedUserNameAsync(TUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
             ThrowIfInvalidState(cancellationToken);
             if (user == null)
@@ -69,7 +69,7 @@ namespace AspNetCore.Identity.Dapper
             return Task.FromResult(user.NormalizedUserName);
         }
 
-        public Task<string> GetUserIdAsync(TUser user, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<string> GetUserIdAsync(TUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
             ThrowIfInvalidState(cancellationToken);
             if (user == null)
@@ -80,7 +80,7 @@ namespace AspNetCore.Identity.Dapper
             return Task.FromResult(ConvertIdToString(user.Id));
         }
 
-        public Task<string> GetUserNameAsync(TUser user, CancellationToken cancellationToken)
+        public virtual Task<string> GetUserNameAsync(TUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
             ThrowIfInvalidState(cancellationToken);
             if (user == null)
@@ -91,7 +91,7 @@ namespace AspNetCore.Identity.Dapper
             return Task.FromResult(user.UserName);
         }
 
-        public Task SetNormalizedUserNameAsync(TUser user, string normalizedName, CancellationToken cancellationToken)
+        public virtual Task SetNormalizedUserNameAsync(TUser user, string normalizedName, CancellationToken cancellationToken = default(CancellationToken))
         {
             ThrowIfInvalidState(cancellationToken);
             if (user == null)
@@ -102,7 +102,7 @@ namespace AspNetCore.Identity.Dapper
             return _userRepository.SetNormalizedUserNameAsync(user.Id, normalizedName);
         }
 
-        public Task SetUserNameAsync(TUser user, string userName, CancellationToken cancellationToken)
+        public virtual Task SetUserNameAsync(TUser user, string userName, CancellationToken cancellationToken = default(CancellationToken))
         {
             ThrowIfInvalidState(cancellationToken);
             if (user == null)

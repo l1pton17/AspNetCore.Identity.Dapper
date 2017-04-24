@@ -10,7 +10,7 @@ namespace AspNetCore.Identity.Dapper
 {
     partial class RoleStore<TRole, TKey, TUserRole, TRoleClaim> : IRoleClaimStore<TRole>
     {
-        public virtual async Task<IList<Claim>> GetClaimsAsync(TRole role, CancellationToken cancellationToken)
+        public virtual async Task<IList<Claim>> GetClaimsAsync(TRole role, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -25,7 +25,7 @@ namespace AspNetCore.Identity.Dapper
                 .ToList();
         }
 
-        public Task AddClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken = new CancellationToken())
+        public virtual Task AddClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -43,7 +43,7 @@ namespace AspNetCore.Identity.Dapper
             return _roleClaimRepository.InsertAsync(CreateRoleClaim(role, claim));
         }
 
-        public Task RemoveClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken = new CancellationToken())
+        public virtual Task RemoveClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();

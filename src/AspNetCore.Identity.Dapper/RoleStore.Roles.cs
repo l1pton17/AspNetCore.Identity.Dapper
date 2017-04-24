@@ -11,10 +11,9 @@ using Microsoft.Extensions.Internal;
 
 namespace AspNetCore.Identity.Dapper
 {
-    partial class RoleStore<TRole, TKey, TUserRole, TRoleClaim> :
-        IRoleStore<TRole>
+    partial class RoleStore<TRole, TKey, TUserRole, TRoleClaim> : IRoleStore<TRole>
     {
-        public async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken)
+        public virtual async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -33,7 +32,7 @@ namespace AspNetCore.Identity.Dapper
             return IdentityResult.Success;
         }
 
-        public async Task<IdentityResult> UpdateAsync(TRole role, CancellationToken cancellationToken)
+        public virtual async Task<IdentityResult> UpdateAsync(TRole role, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -53,7 +52,7 @@ namespace AspNetCore.Identity.Dapper
             return IdentityResult.Success;
         }
 
-        public async Task<IdentityResult> DeleteAsync(TRole role, CancellationToken cancellationToken)
+        public virtual async Task<IdentityResult> DeleteAsync(TRole role, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -72,7 +71,7 @@ namespace AspNetCore.Identity.Dapper
             return IdentityResult.Success;
         }
 
-        public Task<string> GetRoleIdAsync(TRole role, CancellationToken cancellationToken)
+        public virtual Task<string> GetRoleIdAsync(TRole role, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -82,7 +81,7 @@ namespace AspNetCore.Identity.Dapper
             return Task.FromResult(ConvertIdToString(role.Id));
         }
 
-        public Task<string> GetRoleNameAsync(TRole role, CancellationToken cancellationToken)
+        public virtual Task<string> GetRoleNameAsync(TRole role, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -92,7 +91,7 @@ namespace AspNetCore.Identity.Dapper
             return Task.FromResult(role.Name);
         }
 
-        public Task SetRoleNameAsync(TRole role, string roleName, CancellationToken cancellationToken)
+        public virtual Task SetRoleNameAsync(TRole role, string roleName, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -103,7 +102,7 @@ namespace AspNetCore.Identity.Dapper
             return _roleRepository.UpdateAsync(role);
         }
 
-        public Task<string> GetNormalizedRoleNameAsync(TRole role, CancellationToken cancellationToken)
+        public virtual Task<string> GetNormalizedRoleNameAsync(TRole role, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -113,7 +112,7 @@ namespace AspNetCore.Identity.Dapper
             return Task.FromResult(role.NormalizedName);
         }
 
-        public Task SetNormalizedRoleNameAsync(TRole role, string normalizedName, CancellationToken cancellationToken)
+        public virtual Task SetNormalizedRoleNameAsync(TRole role, string normalizedName, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -125,7 +124,7 @@ namespace AspNetCore.Identity.Dapper
             return _roleRepository.UpdateAsync(role);
         }
 
-        public Task<TRole> FindByIdAsync(string id, CancellationToken cancellationToken)
+        public virtual Task<TRole> FindByIdAsync(string id, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -134,7 +133,7 @@ namespace AspNetCore.Identity.Dapper
             return _roleRepository.FindByIdAsync(roleId);
         }
 
-        public Task<TRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
+        public virtual Task<TRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
