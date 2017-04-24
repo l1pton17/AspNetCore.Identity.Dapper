@@ -12,26 +12,26 @@ namespace AspNetCore.Identity.Dapper.Repositories
         where TRoleClaim : IdentityRoleClaim<TKey>
         where TKey : IEquatable<TKey>
     {
-        public RoleClaimRepository(DbManager database)
-            : base(database, "RoleClaims")
+        public RoleClaimRepository(IDapperContext context)
+            : base(context, context.RoleClaimsTableName)
         {
         }
 
         public Task<IEnumerable<TRoleClaim>> FindByRoleIdAsync(TKey roleId)
         {
-            return DbManager.Connection.QueryAsync<TRoleClaim>(
+            return Context.Connection.QueryAsync<TRoleClaim>(
                 $"SELECT * FROM {TableName} WHERE RoleId=@RoleId",
                 new {RoleId = roleId});
         }
 
         public Task InsertAsync(TRoleClaim roleClaim)
         {
-            return DbManager.Connection.InsertAsync(roleClaim);
+            return Context.Connection.InsertAsync(roleClaim);
         }
 
-        public Task RemoveClaimAsync(TKey roleId, Claim claim)
+        public Task DeleteClaimAsync(TKey roleId, Claim claim)
         {
-            return DbManager.Connection.ExecuteAsync(
+            return Context.Connection.ExecuteAsync(
                 $@"DELETE FROM {TableName}
                    WHERE RoleId=@RoleId AND ClaimValue=@ClaimValue AND ClaimType=@ClaimType",
                 new {RoleId = roleId, ClaimValue = claim.Value, ClaimType = claim.Type});

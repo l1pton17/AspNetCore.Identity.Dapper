@@ -11,19 +11,19 @@ namespace AspNetCore.Identity.Dapper.Repositories
         where TUserLogin : IdentityUserLogin<TKey>, new()
         where TKey : IEquatable<TKey>
     {
-        public UserLoginRepository(DbManager database)
-            : base(database, "UserLogins")
+        public UserLoginRepository(IDapperContext context)
+            : base(context, context.UserLoginsTableName)
         {
         }
 
         public Task InsertAsync(TUserLogin userLogin)
         {
-            return DbManager.Connection.InsertAsync(userLogin);
+            return Context.Connection.InsertAsync(userLogin);
         }
 
         public Task<TUserLogin> FindByProviderOrDefaultAsync(string loginProvider, string providerKey)
         {
-            return DbManager.Connection.QueryFirstOrDefaultAsync<TUserLogin>(
+            return Context.Connection.QueryFirstOrDefaultAsync<TUserLogin>(
                 $@"SELECT *
                    FROM {TableName}
                    WHERE LoginProvider=@LoginProvider AND ProviderKey=@ProviderKey",
@@ -32,7 +32,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task<IEnumerable<TUserLogin>> FindByUserId(TKey userId)
         {
-            return DbManager.Connection.QueryAsync<TUserLogin>(
+            return Context.Connection.QueryAsync<TUserLogin>(
                 $@"SELECT *
                    FROM {TableName}
                    WHERE UserId=@UserId",
@@ -41,7 +41,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task DeleteAsync(TKey userId, string loginProvider, string providerKey)
         {
-            return DbManager.Connection.ExecuteAsync(
+            return Context.Connection.ExecuteAsync(
                 $@"DELETE FROM {TableName}
                    WHERE UserId=@UserId
                          AND LoginProvider=@LoginProvider

@@ -1,4 +1,6 @@
 ﻿using System;
+using AspNetCore.Identity.Dapper.Repositories;
+using Dapper.Contrib.Extensions;
 
 namespace AspNetCore.Identity.Dapper
 {
@@ -15,11 +17,13 @@ namespace AspNetCore.Identity.Dapper
         }
     }
 
-    public class IdentityUser<TKey> : IdentityUser<TKey, IdentityUserClaim<TKey>, IdentityUserRole<TKey>, IdentityUserLogin<TKey>, IdentityUserToken<TKey>>
+    public class IdentityUser<TKey> : IdentityUser<TKey, IdentityUserClaim<TKey>, IdentityUserRole<TKey>, IdentityUserLogin<TKey>>
         where TKey : IEquatable<TKey>
     { }
 
-    public class IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin, TUserToken>
+
+    [Table(DefaultTableNames.Users)]
+    public class IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin>
         where TKey : IEquatable<TKey>
     {
 

@@ -12,20 +12,22 @@ namespace AspNetCore.Identity.Dapper
 {
     public class UserStore : UserStore<IdentityUser<string>>
     {
-        public UserStore(IdentityErrorDescriber describer = null) : base(describer) { }
+        public UserStore(IDapperContext context, IdentityErrorDescriber describer = null) : base(context, describer) { }
     }
 
     public class UserStore<TUser> : UserStore<TUser, IdentityRole, string>
         where TUser : IdentityUser<string>, new()
     {
-        public UserStore(IdentityErrorDescriber describer = null) : base(describer) { }
+        public UserStore(IDapperContext context, IdentityErrorDescriber describer = null) : base(context, describer) { }
     }
 
     public class UserStore<TUser, TRole> : UserStore<TUser, TRole, string>
         where TUser : IdentityUser<string>
         where TRole : IdentityRole<string>
     {
-        public UserStore(IdentityErrorDescriber describer = null) : base(describer) { }
+        public UserStore(IDapperContext context, IdentityErrorDescriber describer = null) : base(context, describer)
+        {
+        }
     }
 
     public class UserStore<TUser, TRole, TKey> :
@@ -34,8 +36,8 @@ namespace AspNetCore.Identity.Dapper
         where TRole : IdentityRole<TKey>
         where TKey : IEquatable<TKey>
     {
-        public UserStore(IdentityErrorDescriber describer = null)
-            : base(describer)
+        public UserStore(IDapperContext context, IdentityErrorDescriber describer = null)
+            : base(context, describer)
         { }
 
         protected override IdentityUserRole<TKey> CreateUserRole(TUser user, TRole role)
@@ -80,7 +82,7 @@ namespace AspNetCore.Identity.Dapper
 
     public abstract partial class UserStore<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken, TRoleClaim>
         where TKey : IEquatable<TKey>
-        where TUser : IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin, TUserToken>
+        where TUser : IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin>
         where TRole : IdentityRole<TKey, TUserRole, TRoleClaim>
         where TUserClaim : IdentityUserClaim<TKey>, new()
         where TUserRole : IdentityUserRole<TKey>, new()
@@ -88,7 +90,7 @@ namespace AspNetCore.Identity.Dapper
         where TUserToken : IdentityUserToken<TKey>, new()
         where TRoleClaim : IdentityRoleClaim<TKey>, new()
     {
-        private readonly UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken> _userRepository;
+        private readonly UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin> _userRepository;
         private readonly UserLoginRepository<TUserLogin, TKey> _userLoginRepository;
         private readonly UserTokenRepository<TUserToken, TKey> _userTokenRepository;
         private readonly UserClaimRepository<TUser, TUserClaim, TKey> _userClaimRepository;
@@ -99,16 +101,21 @@ namespace AspNetCore.Identity.Dapper
 
         public IdentityErrorDescriber ErrorDescriber { get; set; }
 
-        protected UserStore(IdentityErrorDescriber describer = null)
+        protected UserStore(IDapperContext context, IdentityErrorDescriber describer = null)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             ErrorDescriber = describer ?? new IdentityErrorDescriber();
-            _userRepository =
-                new UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken>(new DbManager(null));
-            _userLoginRepository = new UserLoginRepository<TUserLogin, TKey>(new DbManager(null));
-            _userTokenRepository = new UserTokenRepository<TUserToken, TKey>(new DbManager(null));
-            _userClaimRepository = new UserClaimRepository<TUser, TUserClaim, TKey>(new DbManager(null));
-            _userRoleRepository = new UserRoleRepository<TUserRole, TKey>(new DbManager(null));
-            _roleRepository = new RoleRepository<TRole, TKey, TUserRole, TRoleClaim>(new DbManager(null));
+
+            _userRepository = new UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin>(context);
+            _userLoginRepository = new UserLoginRepository<TUserLogin, TKey>(context);
+            _userTokenRepository = new UserTokenRepository<TUserToken, TKey>(context);
+            _userClaimRepository = new UserClaimRepository<TUser, TUserClaim, TKey>(context);
+            _userRoleRepository = new UserRoleRepository<TUserRole, TKey>(context);
+            _roleRepository = new RoleRepository<TRole, TKey, TUserRole, TRoleClaim>(context);
         }
 
         public virtual TKey ConvertIdFromString(string id)

@@ -19,10 +19,15 @@ namespace AspNetCore.Identity.Dapper
 
         public IdentityErrorDescriber ErrorDescriber { get; set; }
 
-        public RoleStore(IdentityErrorDescriber describer = null)
+        public RoleStore(IDapperContext context, IdentityErrorDescriber describer = null)
         {
-            _roleRepository = new RoleRepository<TRole, TKey, TUserRole, TRoleClaim>(new DbManager(null));
-            _roleClaimRepository = new RoleClaimRepository<TRoleClaim, TKey>(new DbManager(null));
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            _roleRepository = new RoleRepository<TRole, TKey, TUserRole, TRoleClaim>(context);
+            _roleClaimRepository = new RoleClaimRepository<TRoleClaim, TKey>(context);
 
             ErrorDescriber = describer ?? new IdentityErrorDescriber();
         }

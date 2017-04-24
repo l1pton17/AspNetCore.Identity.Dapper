@@ -11,8 +11,8 @@ namespace AspNetCore.Identity.Dapper.Repositories
         where TUserToken : IdentityUserToken<TKey>
         where TKey : IEquatable<TKey>
     {
-        public UserTokenRepository(DbManager database)
-            : base(database, "UserTokens")
+        public UserTokenRepository(IDapperContext context)
+            : base(context, context.UserTokensTableName)
         {
         }
 
@@ -20,7 +20,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
         {
             userToken.Value = value;
 
-            return DbManager.Connection.ExecuteAsync(
+            return Context.Connection.ExecuteAsync(
                 $@"UPDATE {TableName}
                    SET Value=@Value
                    WHERE UserId=@UserId AND LoginProvider=@LoginProvider AND Name=@Name",
@@ -35,12 +35,12 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task InsertAsync(TUserToken userToken)
         {
-            return DbManager.Connection.InsertAsync(userToken);
+            return Context.Connection.InsertAsync(userToken);
         }
 
         public Task<TUserToken> FindOrDefaultAsync(TKey userId, string loginProvider, string name)
         {
-            return DbManager.Connection.QueryFirstOrDefaultAsync<TUserToken>(
+            return Context.Connection.QueryFirstOrDefaultAsync<TUserToken>(
                 $@"SELECT *
                    FROM {TableName}
                    WHERE UserId=@UserId AND LoginProvider=@LoginProvider AND Name=@Name",
@@ -49,7 +49,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task DeleteAsync(TKey userId, string loginProvider, string name)
         {
-            return DbManager.Connection.ExecuteAsync(
+            return Context.Connection.ExecuteAsync(
                 $@"DELETE FROM {TableName}
                    WHERE UserId=@UserId AND LoginProvider=@LoginProvider AND Name=@Name",
                 new {UserId = userId, LoginProvider = loginProvider, Name = name});

@@ -11,19 +11,19 @@ namespace AspNetCore.Identity.Dapper.Repositories
         where TUserRole : IdentityUserRole<TKey>
         where TRoleClaim : IdentityRoleClaim<TKey>
     {
-        public RoleRepository(DbManager database)
-            : base(database, "Roles")
+        public RoleRepository(IDapperContext context)
+            : base(context, context.RolesTableName)
         {
         }
 
         public Task InsertAsync(TRole role)
         {
-            return DbManager.Connection.InsertAsync(role);
+            return Context.Connection.InsertAsync(role);
         }
 
         public Task DeleteAsync(TRole role)
         {
-            return DbManager.Connection.DeleteAsync(role);
+            return Context.Connection.DeleteAsync(role);
         }
 
         public Task<TRole> FindByNameAsync(string roleName)
@@ -43,7 +43,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task UpdateAsync(TRole role)
         {
-            return DbManager.Connection.UpdateAsync(role);
+            return Context.Connection.UpdateAsync(role);
         }
     }
 }

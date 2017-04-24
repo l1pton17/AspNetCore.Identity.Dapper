@@ -58,7 +58,7 @@ namespace AspNetCore.Identity.Dapper
                 throw new ArgumentNullException(nameof(claim));
             }
 
-            return _roleClaimRepository.RemoveClaimAsync(role.Id, claim);
+            return _roleClaimRepository.DeleteClaimAsync(role.Id, claim);
         }
 
         protected virtual TRoleClaim CreateRoleClaim(TRole role, Claim claim)

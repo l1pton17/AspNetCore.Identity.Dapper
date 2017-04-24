@@ -8,25 +8,25 @@ namespace AspNetCore.Identity.Dapper.Repositories
 {
     public abstract class RepositoryBase<TEntity, TKey>
     {
-        protected DbManager DbManager { get; }
+        protected IDapperContext Context { get; }
         public string TableName { get; }
 
-        protected RepositoryBase(DbManager dbManager, string tableName)
+        protected RepositoryBase(IDapperContext context, string tableName)
         {
             TableName = tableName;
-            DbManager = dbManager;
+            Context = context;
         }
 
         protected virtual Task<TEntity> FindByPropertyAsync<T>(string propertyName, T propertyValue)
         {
-            return DbManager.Connection.QueryFirstAsync<TEntity>(
+            return Context.Connection.QueryFirstAsync<TEntity>(
                 $"SELECT * FROM {TableName} WHERE {propertyName}=@Value",
                 new { Value = propertyValue });
         }
 
         protected virtual Task SetPropertyAsync<T>(TKey id, string propertyName, T propertyValue)
         {
-            return DbManager.Connection.ExecuteAsync(
+            return Context.Connection.ExecuteAsync(
                 $@"UPDATE {TableName} SET {propertyName}=@Value WHERE Id=@Id",
                 new { Id = id, Value = propertyValue });
         }

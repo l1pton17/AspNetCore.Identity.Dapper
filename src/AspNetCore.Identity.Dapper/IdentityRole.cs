@@ -1,4 +1,6 @@
 ﻿using System;
+using AspNetCore.Identity.Dapper.Repositories;
+using Dapper.Contrib.Extensions;
 
 namespace AspNetCore.Identity.Dapper
 {
@@ -14,7 +16,7 @@ namespace AspNetCore.Identity.Dapper
             Name = roleName;
         }
     }
-
+    
     public class IdentityRole<TKey> : IdentityRole<TKey, IdentityUserRole<TKey>, IdentityRoleClaim<TKey>>
         where TKey : IEquatable<TKey>
     {
@@ -23,6 +25,7 @@ namespace AspNetCore.Identity.Dapper
         public IdentityRole(string roleName) : base(roleName) { }
     }
 
+    [Table(DefaultTableNames.Roles)]
     public class IdentityRole<TKey, TUserRole, TRoleClaim>
         where TKey : IEquatable<TKey>
         where TUserRole : IdentityUserRole<TKey>

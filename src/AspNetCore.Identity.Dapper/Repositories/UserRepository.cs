@@ -7,12 +7,12 @@ using Dapper.Contrib.Extensions;
 
 namespace AspNetCore.Identity.Dapper.Repositories
 {
-    public class UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken> : RepositoryBase<TUser, TKey>
-        where TUser : IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin, TUserToken>
+    public class UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin> : RepositoryBase<TUser, TKey>
+        where TUser : IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin>
         where TKey : IEquatable<TKey>
     {
-        public UserRepository(DbManager database)
-            : base(database, "Users")
+        public UserRepository(IDapperContext context)
+            : base(context, context.UsersTableName)
         {
         }
 
@@ -109,7 +109,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task IncrementAccessFailedCountAsync(TKey id)
         {
-            return DbManager.Connection.ExecuteAsync(
+            return Context.Connection.ExecuteAsync(
                 $@"UPDATE {TableName}
                    SET AccessFailedCount = AccessFailedCount + 1
                    WHERE Id=@Id",
@@ -118,17 +118,17 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task InsertAsync(TUser user)
         {
-            return DbManager.Connection.InsertAsync(user);
+            return Context.Connection.InsertAsync(user);
         }
 
         public Task UpdateAsync(TUser user)
         {
-            return DbManager.Connection.UpdateAsync(user);
+            return Context.Connection.UpdateAsync(user);
         }
 
         public Task DeleteAsync(TUser user)
         {
-            return DbManager.Connection.ExecuteAsync(
+            return Context.Connection.ExecuteAsync(
                 $"DELETE FROM {TableName} WHERE Id=@Id",
                 new {Id = user.Id});
         }
@@ -152,7 +152,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
         {
             string userRolesTableName = "UserRoles";
 
-            return DbManager.Connection.QueryAsync<TUser>(
+            return Context.Connection.QueryAsync<TUser>(
                 $@"SELECT users.*
                    FROM {TableName} users JOIN {userRolesTableName} userRoles
                         ON users.Id = userRoles.UserId

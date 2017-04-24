@@ -11,30 +11,28 @@ namespace AspNetCore.Identity.Dapper.Repositories
         where TUserRole : IdentityUserRole<TKey>
         where TKey : IEquatable<TKey>
     {
-        public UserRoleRepository(DbManager dbManager)
-            : base(dbManager, "UserRoles")
+        public UserRoleRepository(IDapperContext context)
+            : base(context, context.UserRolesTableName)
         {
         }
 
         public Task InsertAsync(TUserRole userRole)
         {
-            return DbManager.Connection.InsertAsync(userRole);
+            return Context.Connection.InsertAsync(userRole);
         }
 
         public Task<IEnumerable<string>> FindRoleNamesAsync(TKey userId)
         {
-            string rolesTableName = "Roles";
-
-            return DbManager.Connection.QueryAsync<string>(
+            return Context.Connection.QueryAsync<string>(
                 $@"SELECT roles.Name
-                   FROM {rolesTableName} roles JOIN {TableName} userRoles
+                   FROM {Context.RolesTableName} roles JOIN {TableName} userRoles
                         ON roles.Id = userRoles.RoleId AND userRoles.UserId=@UserId",
                 new {UserId = userId});
         }
 
         public Task<bool> ExistsAsync(TKey userId, TKey roleId)
         {
-            return DbManager.Connection.QueryFirstAsync<bool>(
+            return Context.Connection.QueryFirstAsync<bool>(
                 $@"SELECT COUNT(1)
                    FROM {TableName}
                    WHERE UserId=@UserId AND RoleId=@RoleId",
@@ -43,7 +41,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task DeleteAsync(TKey userId, TKey roleId)
         {
-            return DbManager.Connection.ExecuteAsync(
+            return Context.Connection.ExecuteAsync(
                 $@"DELETE FROM {TableName}
                    WHERE UserId=@UserId AND RoleId=@RoleId",
                 new {UserId = userId, RoleId = roleId});

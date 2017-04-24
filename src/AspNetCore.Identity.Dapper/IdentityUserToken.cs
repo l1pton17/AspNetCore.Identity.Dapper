@@ -1,7 +1,10 @@
 ﻿using System;
+using AspNetCore.Identity.Dapper.Repositories;
+using Dapper.Contrib.Extensions;
 
 namespace AspNetCore.Identity.Dapper
 {
+    [Table(DefaultTableNames.UserTokens)]
     public class IdentityUserToken<TKey>
         where TKey : IEquatable<TKey>
     {

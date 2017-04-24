@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Security.Claims;
+using AspNetCore.Identity.Dapper.Repositories;
+using Dapper.Contrib.Extensions;
 
 namespace AspNetCore.Identity.Dapper
 {
+    [Table(DefaultTableNames.UserClaims)]
     public class IdentityUserClaim<TKey>
         where TKey:IEquatable<TKey>
     {
