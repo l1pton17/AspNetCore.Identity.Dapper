@@ -55,11 +55,19 @@ namespace AspNetCore.Identity.Dapper.Repositories
             return SetPropertyAsync(id, nameof(IdentityUser.TwoFactorEnabled), enabled);
         }
 
-        private Task SetPropertyAsync<T>(TKey id, string propertyName, T propertyValue)
+        public Task SetEmailAsync(TKey id, string email)
         {
-            return _database.Connection.ExecuteAsync(
-                $@"UPDATE {TableName} SET {propertyName}=@Value WHERE Id=@Id",
-                new {Id = id, Value = propertyValue});
+            return SetPropertyAsync(id, nameof(IdentityUser.Email), email);
+        }
+
+        public Task SetEmailConfirmedAsync(TKey id, bool confirmed)
+        {
+            return SetPropertyAsync(id, nameof(IdentityUser.EmailConfirmed), confirmed);
+        }
+
+        public Task SetNormalizedEmailAsync(TKey id, string normalizedEmail)
+        {
+            return SetPropertyAsync(id, nameof(IdentityUser.NormalizedEmail), normalizedEmail);
         }
 
         public Task InsertAsync(TUser user)
@@ -81,16 +89,31 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task<TUser> FindByIdAsync(TKey id)
         {
-            return _database.Connection.QueryFirstAsync<TUser>(
-                $"SELECT * FROM {TableName} WHERE Id=@Id",
-                new {Id = id});
+            return FindByPropertyAsync(nameof(IdentityUser.Id), id);
         }
 
         public Task<TUser> FindByNameAsync(string normalizedUserName)
         {
+            return FindByPropertyAsync(nameof(IdentityUser.NormalizedUserName), normalizedUserName);
+        }
+
+        public Task<TUser> FindByEmailAsync(string normalizedEmail)
+        {
+            return FindByPropertyAsync(nameof(IdentityUser.NormalizedEmail), normalizedEmail);
+        }
+
+        private Task<TUser> FindByPropertyAsync<T>(string propertyName, T propertyValue)
+        {
             return _database.Connection.QueryFirstAsync<TUser>(
-                $"SELECT * FROM {TableName} WHERE NormalizedUserName=@NormalizedUserName",
-                new {NormalizedUserName = normalizedUserName});
+                $"SELECT * FROM {TableName} WHERE {propertyName}=@Value",
+                new {Value = propertyValue});
+        }
+
+        private Task SetPropertyAsync<T>(TKey id, string propertyName, T propertyValue)
+        {
+            return _database.Connection.ExecuteAsync(
+                $@"UPDATE {TableName} SET {propertyName}=@Value WHERE Id=@Id",
+                new { Id = id, Value = propertyValue });
         }
     }
 }

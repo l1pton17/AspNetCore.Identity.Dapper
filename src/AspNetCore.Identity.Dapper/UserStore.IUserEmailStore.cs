@@ -9,39 +9,83 @@ namespace AspNetCore.Identity.Dapper
 {
     partial class UserStore<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken, TRoleClaim> : IUserEmailStore<TUser>
     {
-        public Task<TUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
+        public virtual Task<TUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            return _userRepository.FindByEmailAsync(normalizedEmail);
         }
 
-        public Task<string> GetEmailAsync(TUser user, CancellationToken cancellationToken)
+        public virtual Task<string> GetEmailAsync(TUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return Task.FromResult(user.Email);
         }
 
-        public Task<bool> GetEmailConfirmedAsync(TUser user, CancellationToken cancellationToken)
+        public virtual Task<bool> GetEmailConfirmedAsync(TUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return Task.FromResult(user.EmailConfirmed);
         }
 
-        public Task<string> GetNormalizedEmailAsync(TUser user, CancellationToken cancellationToken)
+        public virtual Task<string> GetNormalizedEmailAsync(TUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return Task.FromResult(user.NormalizedEmail);
         }
 
-        public Task SetEmailAsync(TUser user, string email, CancellationToken cancellationToken)
+        public virtual Task SetEmailAsync(TUser user, string email, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return _userRepository.SetEmailAsync(user.Id, email);
         }
 
-        public Task SetEmailConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken)
+        public virtual Task SetEmailConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return _userRepository.SetEmailConfirmedAsync(user.Id, confirmed);
         }
 
-        public Task SetNormalizedEmailAsync(TUser user, string normalizedEmail, CancellationToken cancellationToken)
+        public virtual Task SetNormalizedEmailAsync(TUser user, string normalizedEmail, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return _userRepository.SetNormalizedEmailAsync(user.Id, normalizedEmail);
         }
     }
 }
