@@ -11,19 +11,55 @@ namespace AspNetCore.Identity.Dapper
     {
         protected abstract TUserToken CreateUserToken(TUser user, string loginProvider, string name, string value);
 
-        public Task<string> GetTokenAsync(TUser user, string loginProvider, string name, CancellationToken cancellationToken)
+        private Task<TUserToken> FindTokenOrDefaultAsync(TUser user, string loginProvider, string name)
         {
-            throw new NotImplementedException();
+            return _userTokenRepository.FindOrDefaultAsync(user.Id, loginProvider, name);
         }
 
-        public Task RemoveTokenAsync(TUser user, string loginProvider, string name, CancellationToken cancellationToken)
+        public virtual async Task<string> GetTokenAsync(TUser user, string loginProvider, string name, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            var entry = await FindTokenOrDefaultAsync(user, loginProvider, name);
+
+            return entry?.Value;
         }
 
-        public Task SetTokenAsync(TUser user, string loginProvider, string name, string value, CancellationToken cancellationToken)
+        public virtual Task RemoveTokenAsync(TUser user, string loginProvider, string name, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return _userTokenRepository.DeleteAsync(user.Id, loginProvider, name);
+        }
+
+        public virtual async Task SetTokenAsync(TUser user, string loginProvider, string name, string value, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            var token = await FindTokenOrDefaultAsync(user, loginProvider, name);
+            if (token == null)
+            {
+                await _userTokenRepository.InsertAsync(CreateUserToken(user, loginProvider, name, value));
+            }
+            else
+            {
+                await _userTokenRepository.SetTokenValueAsync(token, value);
+            }
         }
     }
 }

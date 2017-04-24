@@ -7,27 +7,23 @@ using Dapper.Contrib.Extensions;
 
 namespace AspNetCore.Identity.Dapper.Repositories
 {
-    public class UserLoginRepository<TUserLogin, TKey>
+    public class UserLoginRepository<TUserLogin, TKey> : RepositoryBase<TUserLogin, TKey>
         where TUserLogin : IdentityUserLogin<TKey>, new()
         where TKey : IEquatable<TKey>
     {
-        private readonly DbManager _database;
-        //TODO: remove in a refactoring stage
-        public string TableName { get; } = "UserLogins";
-
         public UserLoginRepository(DbManager database)
+            : base(database, "UserLogins")
         {
-            _database = database;
         }
 
         public Task InsertAsync(TUserLogin userLogin)
         {
-            return _database.Connection.InsertAsync(userLogin);
+            return DbManager.Connection.InsertAsync(userLogin);
         }
 
         public Task<TUserLogin> FindByProviderOrDefaultAsync(string loginProvider, string providerKey)
         {
-            return _database.Connection.QueryFirstOrDefaultAsync<TUserLogin>(
+            return DbManager.Connection.QueryFirstOrDefaultAsync<TUserLogin>(
                 $@"SELECT *
                    FROM {TableName}
                    WHERE LoginProvider=@LoginProvider AND ProviderKey=@ProviderKey",
@@ -36,7 +32,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task<IEnumerable<TUserLogin>> FindByUserId(TKey userId)
         {
-            return _database.Connection.QueryAsync<TUserLogin>(
+            return DbManager.Connection.QueryAsync<TUserLogin>(
                 $@"SELECT *
                    FROM {TableName}
                    WHERE UserId=@UserId",
@@ -45,7 +41,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task DeleteAsync(TKey userId, string loginProvider, string providerKey)
         {
-            return _database.Connection.ExecuteAsync(
+            return DbManager.Connection.ExecuteAsync(
                 $@"DELETE FROM {TableName}
                    WHERE UserId=@UserId
                          AND LoginProvider=@LoginProvider

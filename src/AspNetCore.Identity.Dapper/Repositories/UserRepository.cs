@@ -7,17 +7,13 @@ using Dapper.Contrib.Extensions;
 
 namespace AspNetCore.Identity.Dapper.Repositories
 {
-    public class UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken>
+    public class UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken> : RepositoryBase<TUser, TKey>
         where TUser : IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin, TUserToken>
         where TKey : IEquatable<TKey>
     {
-        private readonly DbManager _database;
-        //TODO: remove in a refactoring stage
-        public string TableName { get; } = "Users";
-
         public UserRepository(DbManager database)
+            : base(database, "Users")
         {
-            _database = database;
         }
 
         public Task SetUserNameAsync(TUser user, string userName)
@@ -113,7 +109,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task IncrementAccessFailedCountAsync(TKey id)
         {
-            return _database.Connection.ExecuteAsync(
+            return DbManager.Connection.ExecuteAsync(
                 $@"UPDATE {TableName}
                    SET AccessFailedCount = AccessFailedCount + 1
                    WHERE Id=@Id",
@@ -122,17 +118,17 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task InsertAsync(TUser user)
         {
-            return _database.Connection.InsertAsync(user);
+            return DbManager.Connection.InsertAsync(user);
         }
 
         public Task UpdateAsync(TUser user)
         {
-            return _database.Connection.UpdateAsync(user);
+            return DbManager.Connection.UpdateAsync(user);
         }
 
         public Task DeleteAsync(TUser user)
         {
-            return _database.Connection.ExecuteAsync(
+            return DbManager.Connection.ExecuteAsync(
                 $"DELETE FROM {TableName} WHERE Id=@Id",
                 new {Id = user.Id});
         }
@@ -150,20 +146,6 @@ namespace AspNetCore.Identity.Dapper.Repositories
         public Task<TUser> FindByEmailAsync(string normalizedEmail)
         {
             return FindByPropertyAsync(nameof(IdentityUser.NormalizedEmail), normalizedEmail);
-        }
-
-        private Task<TUser> FindByPropertyAsync<T>(string propertyName, T propertyValue)
-        {
-            return _database.Connection.QueryFirstAsync<TUser>(
-                $"SELECT * FROM {TableName} WHERE {propertyName}=@Value",
-                new {Value = propertyValue});
-        }
-
-        private Task SetPropertyAsync<T>(TKey id, string propertyName, T propertyValue)
-        {
-            return _database.Connection.ExecuteAsync(
-                $@"UPDATE {TableName} SET {propertyName}=@Value WHERE Id=@Id",
-                new { Id = id, Value = propertyValue });
         }
     }
 }
