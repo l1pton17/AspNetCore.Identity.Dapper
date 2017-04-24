@@ -20,18 +20,25 @@ namespace AspNetCore.Identity.Dapper.Repositories
             _database = database;
         }
 
-        public Task SetUserNameAsync(TUser user, string userName)
+        public Task SetUserNameAsync(TKey id, string userName)
         {
             return _database.Connection.ExecuteAsync(
                 $@"UPDATE {TableName} SET UserName=@UserName WHERE Id=@Id",
-                new {Id = user.Id, UserName = userName});
+                new {Id = id, UserName = userName});
         }
 
-        public Task SetNormalizedUserNameAsync(TUser user, string normalizedName)
+        public Task SetNormalizedUserNameAsync(TKey id, string normalizedName)
         {
             return _database.Connection.ExecuteAsync(
                 $@"UPDATE {TableName} SET NormalizedUserName=@NormalizedName WHERE Id=@Id",
-                new { Id = user.Id, NormalizedName = normalizedName });
+                new { Id = id, NormalizedName = normalizedName });
+        }
+
+        public Task SetPasswordHashAsync(TKey id, string passwordHash)
+        {
+            return _database.Connection.ExecuteAsync(
+                $@"UPDATE {TableName} SET PasswordHash=@PasswordHash WHERE Id=@Id",
+                new { Id = id, PasswordHash = passwordHash });
         }
 
         public Task InsertAsync(TUser user)

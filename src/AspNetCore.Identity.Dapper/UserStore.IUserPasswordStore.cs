@@ -11,17 +11,35 @@ namespace AspNetCore.Identity.Dapper
     {
         public Task<string> GetPasswordHashAsync(TUser user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return Task.FromResult(user.PasswordHash);
         }
 
         public Task<bool> HasPasswordAsync(TUser user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return Task.FromResult(user.PasswordHash != null);
         }
 
         public Task SetPasswordHashAsync(TUser user, string passwordHash, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return _userRepository.SetPasswordHashAsync(user.Id, passwordHash);
         }
     }
 }
