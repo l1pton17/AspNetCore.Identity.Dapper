@@ -22,6 +22,7 @@ namespace AspNetCore.Identity.Dapper
         private readonly UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken> _userRepository;
         private readonly UserLoginRepository<TUserLogin, TKey> _userLoginRepository;
         private readonly UserTokenRepository<TUserToken, TKey> _userTokenRepository;
+        private readonly UserClaimRepository<TUser, TUserClaim, TKey> _userClaimRepository;
 
         private bool _disposed;
 
@@ -34,6 +35,7 @@ namespace AspNetCore.Identity.Dapper
                 new UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken>(new DbManager(null));
             _userLoginRepository = new UserLoginRepository<TUserLogin, TKey>(new DbManager(null));
             _userTokenRepository = new UserTokenRepository<TUserToken, TKey>(new DbManager(null));
+            _userClaimRepository = new UserClaimRepository<TUser, TUserClaim, TKey>(new DbManager(null));
         }
 
         public virtual TKey ConvertIdFromString(string id)
