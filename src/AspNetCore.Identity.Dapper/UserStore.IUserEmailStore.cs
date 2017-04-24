@@ -61,7 +61,7 @@ namespace AspNetCore.Identity.Dapper
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return _userRepository.SetEmailAsync(user.Id, email);
+            return _userRepository.SetEmailAsync(user, email);
         }
 
         public virtual Task SetEmailConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken = default(CancellationToken))
@@ -73,7 +73,7 @@ namespace AspNetCore.Identity.Dapper
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return _userRepository.SetEmailConfirmedAsync(user.Id, confirmed);
+            return _userRepository.SetEmailConfirmedAsync(user, confirmed);
         }
 
         public virtual Task SetNormalizedEmailAsync(TUser user, string normalizedEmail, CancellationToken cancellationToken = default(CancellationToken))
@@ -85,7 +85,7 @@ namespace AspNetCore.Identity.Dapper
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return _userRepository.SetNormalizedEmailAsync(user.Id, normalizedEmail);
+            return _userRepository.SetNormalizedEmailAsync(user, normalizedEmail);
         }
     }
 }

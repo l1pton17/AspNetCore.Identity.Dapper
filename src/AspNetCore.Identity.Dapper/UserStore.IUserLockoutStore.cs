@@ -9,39 +9,96 @@ namespace AspNetCore.Identity.Dapper
 {
     partial class UserStore<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken, TRoleClaim> : IUserLockoutStore<TUser>
     {
-        public Task<int> GetAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
+        public virtual Task<int> GetAccessFailedCountAsync(TUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return Task.FromResult(user.AccessFailedCount);
         }
 
-        public Task<bool> GetLockoutEnabledAsync(TUser user, CancellationToken cancellationToken)
+        public virtual Task<bool> GetLockoutEnabledAsync(TUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return Task.FromResult(user.LockoutEnabled);
         }
 
-        public Task<DateTimeOffset?> GetLockoutEndDateAsync(TUser user, CancellationToken cancellationToken)
+        public virtual Task<DateTimeOffset?> GetLockoutEndDateAsync(TUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return Task.FromResult(user.LockoutEnd);
         }
 
-        public Task<int> IncrementAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
+        public virtual async Task<int> IncrementAccessFailedCountAsync(TUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            //TODO: Possible race condition, the second method is better
+            await _userRepository.SetAccessFailedCountAsync(user, user.AccessFailedCount + 1);
+
+            return user.AccessFailedCount;
+
+            //await _userRepository.IncrementAccessFailedCountAsync(user.Id);
+            //var updatedUser = await _userRepository.FindByIdAsync(user.Id);
+            //user.AccessFailedCount = updatedUser.AccessFailedCount;
+            //return user.AccessFailedCount;
         }
 
-        public Task ResetAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
+        public virtual Task ResetAccessFailedCountAsync(TUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return _userRepository.SetAccessFailedCountAsync(user, 0);
         }
 
-        public Task SetLockoutEnabledAsync(TUser user, bool enabled, CancellationToken cancellationToken)
+        public virtual Task SetLockoutEnabledAsync(TUser user, bool enabled, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+            
+            return _userRepository.SetLockoutEnabledAsync(user, enabled);
         }
 
-        public Task SetLockoutEndDateAsync(TUser user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken)
+        public virtual Task SetLockoutEndDateAsync(TUser user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return _userRepository.SetLockoutEndDateAsync(user, lockoutEnd);
         }
     }
 }

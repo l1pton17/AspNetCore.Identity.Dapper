@@ -28,7 +28,7 @@ namespace AspNetCore.Identity.Dapper
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return _userRepository.SetTwoFactorEnabledAsync(user.Id, enabled);
+            return _userRepository.SetTwoFactorEnabledAsync(user, enabled);
         }
     }
 }

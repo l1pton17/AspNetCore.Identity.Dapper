@@ -20,54 +20,104 @@ namespace AspNetCore.Identity.Dapper.Repositories
             _database = database;
         }
 
-        public Task SetUserNameAsync(TKey id, string userName)
+        public Task SetUserNameAsync(TUser user, string userName)
         {
-            return SetPropertyAsync(id, nameof(IdentityUser.UserName), userName);
+            user.UserName = userName;
+
+            return SetPropertyAsync(user.Id, nameof(IdentityUser.UserName), userName);
         }
 
-        public Task SetNormalizedUserNameAsync(TKey id, string normalizedName)
+        public Task SetNormalizedUserNameAsync(TUser user, string normalizedName)
         {
-            return SetPropertyAsync(id, nameof(IdentityUser.NormalizedUserName), normalizedName);
+            user.NormalizedUserName = normalizedName;
+
+            return SetPropertyAsync(user.Id, nameof(IdentityUser.NormalizedUserName), normalizedName);
         }
 
-        public Task SetPasswordHashAsync(TKey id, string passwordHash)
+        public Task SetPasswordHashAsync(TUser user, string passwordHash)
         {
-            return SetPropertyAsync(id, nameof(IdentityUser.PasswordHash), passwordHash);
+            user.PasswordHash = passwordHash;
+
+            return SetPropertyAsync(user.Id, nameof(IdentityUser.PasswordHash), passwordHash);
         }
 
-        public Task SetPhoneNumberAsync(TKey id, string phoneNumber)
+        public Task SetPhoneNumberAsync(TUser user, string phoneNumber)
         {
-            return SetPropertyAsync(id, nameof(IdentityUser.PhoneNumber), phoneNumber);
+            user.PhoneNumber = phoneNumber;
+
+            return SetPropertyAsync(user.Id, nameof(IdentityUser.PhoneNumber), phoneNumber);
         }
 
-        public Task SetPhoneNumberConfirmedAsync(TKey id, bool confirmed)
+        public Task SetPhoneNumberConfirmedAsync(TUser user, bool confirmed)
         {
-            return SetPropertyAsync(id, nameof(IdentityUser.PhoneNumberConfirmed), confirmed);
+            user.PhoneNumberConfirmed = confirmed;
+
+            return SetPropertyAsync(user.Id, nameof(IdentityUser.PhoneNumberConfirmed), confirmed);
         }
 
-        public Task SetSecurityStamp(TKey id, string stamp)
+        public Task SetSecurityStamp(TUser user, string stamp)
         {
-            return SetPropertyAsync(id, nameof(IdentityUser.SecurityStamp), stamp);
+            user.SecurityStamp = stamp;
+
+            return SetPropertyAsync(user.Id, nameof(IdentityUser.SecurityStamp), stamp);
         }
 
-        public Task SetTwoFactorEnabledAsync(TKey id, bool enabled)
+        public Task SetTwoFactorEnabledAsync(TUser user, bool enabled)
         {
-            return SetPropertyAsync(id, nameof(IdentityUser.TwoFactorEnabled), enabled);
+            user.TwoFactorEnabled = enabled;
+
+            return SetPropertyAsync(user.Id, nameof(IdentityUser.TwoFactorEnabled), enabled);
         }
 
-        public Task SetEmailAsync(TKey id, string email)
+        public Task SetEmailAsync(TUser user, string email)
         {
-            return SetPropertyAsync(id, nameof(IdentityUser.Email), email);
+            user.Email = email;
+
+            return SetPropertyAsync(user.Id, nameof(IdentityUser.Email), email);
         }
 
-        public Task SetEmailConfirmedAsync(TKey id, bool confirmed)
+        public Task SetEmailConfirmedAsync(TUser user, bool confirmed)
         {
-            return SetPropertyAsync(id, nameof(IdentityUser.EmailConfirmed), confirmed);
+            user.EmailConfirmed = confirmed;
+
+            return SetPropertyAsync(user.Id, nameof(IdentityUser.EmailConfirmed), confirmed);
         }
 
-        public Task SetNormalizedEmailAsync(TKey id, string normalizedEmail)
+        public Task SetNormalizedEmailAsync(TUser user, string normalizedEmail)
         {
-            return SetPropertyAsync(id, nameof(IdentityUser.NormalizedEmail), normalizedEmail);
+            user.NormalizedEmail = normalizedEmail;
+
+            return SetPropertyAsync(user.Id, nameof(IdentityUser.NormalizedEmail), normalizedEmail);
+        }
+
+        public Task SetAccessFailedCountAsync(TUser user, int value)
+        {
+            user.AccessFailedCount = value;
+
+            return SetPropertyAsync(user.Id, nameof(IdentityUser.AccessFailedCount), 0);
+        }
+
+        public Task SetLockoutEnabledAsync(TUser user, bool enabled)
+        {
+            user.LockoutEnabled = enabled;
+
+            return SetPropertyAsync(user.Id, nameof(IdentityUser.LockoutEnabled), enabled);
+        }
+
+        public Task SetLockoutEndDateAsync(TUser user, DateTimeOffset? lockoutEnd)
+        {
+            user.LockoutEnd = lockoutEnd;
+
+            return SetPropertyAsync(user.Id, nameof(IdentityUser.LockoutEnd), lockoutEnd);
+        }
+
+        public Task IncrementAccessFailedCountAsync(TKey id)
+        {
+            return _database.Connection.ExecuteAsync(
+                $@"UPDATE {TableName}
+                   SET AccessFailedCount = AccessFailedCount + 1
+                   WHERE Id=@Id",
+                new {Id = id});
         }
 
         public Task InsertAsync(TUser user)

@@ -39,7 +39,7 @@ namespace AspNetCore.Identity.Dapper
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return _userRepository.SetPasswordHashAsync(user.Id, passwordHash);
+            return _userRepository.SetPasswordHashAsync(user, passwordHash);
         }
     }
 }

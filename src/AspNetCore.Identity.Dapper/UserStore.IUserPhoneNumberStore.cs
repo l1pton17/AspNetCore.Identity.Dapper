@@ -42,7 +42,7 @@ namespace AspNetCore.Identity.Dapper
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return _userRepository.SetPhoneNumberAsync(user.Id, phoneNumber);
+            return _userRepository.SetPhoneNumberAsync(user, phoneNumber);
         }
 
         public virtual Task SetPhoneNumberConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken = default(CancellationToken))
@@ -54,7 +54,7 @@ namespace AspNetCore.Identity.Dapper
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return _userRepository.SetPhoneNumberConfirmedAsync(user.Id, confirmed);
+            return _userRepository.SetPhoneNumberConfirmedAsync(user, confirmed);
         }
     }
 }

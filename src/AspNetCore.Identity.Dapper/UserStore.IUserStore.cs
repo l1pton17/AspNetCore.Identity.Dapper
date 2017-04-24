@@ -99,7 +99,7 @@ namespace AspNetCore.Identity.Dapper
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return _userRepository.SetNormalizedUserNameAsync(user.Id, normalizedName);
+            return _userRepository.SetNormalizedUserNameAsync(user, normalizedName);
         }
 
         public virtual Task SetUserNameAsync(TUser user, string userName, CancellationToken cancellationToken = default(CancellationToken))
@@ -110,7 +110,7 @@ namespace AspNetCore.Identity.Dapper
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return _userRepository.SetUserNameAsync(user.Id, userName);
+            return _userRepository.SetUserNameAsync(user, userName);
         }
 
         public virtual async Task<IdentityResult> UpdateAsync(TUser user, CancellationToken cancellationToken)

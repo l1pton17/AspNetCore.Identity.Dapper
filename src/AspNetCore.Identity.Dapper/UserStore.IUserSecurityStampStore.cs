@@ -30,7 +30,7 @@ namespace AspNetCore.Identity.Dapper
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return _userRepository.SetSecurityStamp(user.Id, stamp);
+            return _userRepository.SetSecurityStamp(user, stamp);
         }
     }
 }
