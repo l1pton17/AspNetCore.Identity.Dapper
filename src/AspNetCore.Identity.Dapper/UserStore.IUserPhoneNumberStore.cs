@@ -9,24 +9,52 @@ namespace AspNetCore.Identity.Dapper
 {
     partial class UserStore<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken, TRoleClaim> : IUserPhoneNumberStore<TUser>
     {
-        public Task<string> GetPhoneNumberAsync(TUser user, CancellationToken cancellationToken)
+        public virtual Task<string> GetPhoneNumberAsync(TUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return Task.FromResult(user.PhoneNumber);
         }
 
-        public Task<bool> GetPhoneNumberConfirmedAsync(TUser user, CancellationToken cancellationToken)
+        public virtual Task<bool> GetPhoneNumberConfirmedAsync(TUser user, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return Task.FromResult(user.PhoneNumberConfirmed);
         }
 
-        public Task SetPhoneNumberAsync(TUser user, string phoneNumber, CancellationToken cancellationToken)
+        public virtual Task SetPhoneNumberAsync(TUser user, string phoneNumber, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return _userRepository.SetPhoneNumberAsync(user.Id, phoneNumber);
         }
 
-        public Task SetPhoneNumberConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken)
+        public virtual Task SetPhoneNumberConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            ThrowIfInvalidState(cancellationToken);
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return _userRepository.SetPhoneNumberConfirmedAsync(user.Id, confirmed);
         }
     }
 }

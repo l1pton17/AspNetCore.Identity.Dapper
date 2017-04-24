@@ -22,23 +22,34 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task SetUserNameAsync(TKey id, string userName)
         {
-            return _database.Connection.ExecuteAsync(
-                $@"UPDATE {TableName} SET UserName=@UserName WHERE Id=@Id",
-                new {Id = id, UserName = userName});
+            return SetPropertyAsync(id, nameof(IdentityUser.UserName), userName);
         }
 
         public Task SetNormalizedUserNameAsync(TKey id, string normalizedName)
         {
-            return _database.Connection.ExecuteAsync(
-                $@"UPDATE {TableName} SET NormalizedUserName=@NormalizedName WHERE Id=@Id",
-                new { Id = id, NormalizedName = normalizedName });
+            return SetPropertyAsync(id, nameof(IdentityUser.NormalizedUserName), normalizedName);
         }
 
         public Task SetPasswordHashAsync(TKey id, string passwordHash)
         {
+            return SetPropertyAsync(id, nameof(IdentityUser.PasswordHash), passwordHash);
+        }
+
+        public Task SetPhoneNumberAsync(TKey id, string phoneNumber)
+        {
+            return SetPropertyAsync(id, nameof(IdentityUser.PhoneNumber), phoneNumber);
+        }
+
+        public Task SetPhoneNumberConfirmedAsync(TKey id, bool confirmed)
+        {
+            return SetPropertyAsync(id, nameof(IdentityUser.PhoneNumberConfirmed), confirmed);
+        }
+
+        private Task SetPropertyAsync<T>(TKey id, string propertyName, T propertyValue)
+        {
             return _database.Connection.ExecuteAsync(
-                $@"UPDATE {TableName} SET PasswordHash=@PasswordHash WHERE Id=@Id",
-                new { Id = id, PasswordHash = passwordHash });
+                $@"UPDATE {TableName} SET {propertyName}=@Value WHERE Id=@Id",
+                new {Id = id, Value = propertyValue});
         }
 
         public Task InsertAsync(TUser user)
