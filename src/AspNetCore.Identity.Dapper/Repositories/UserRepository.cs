@@ -50,6 +50,11 @@ namespace AspNetCore.Identity.Dapper.Repositories
             return SetPropertyAsync(id, nameof(IdentityUser.SecurityStamp), stamp);
         }
 
+        public Task SetTwoFactorEnabledAsync(TKey id, bool enabled)
+        {
+            return SetPropertyAsync(id, nameof(IdentityUser.TwoFactorEnabled), enabled);
+        }
+
         private Task SetPropertyAsync<T>(TKey id, string propertyName, T propertyValue)
         {
             return _database.Connection.ExecuteAsync(
