@@ -8,8 +8,8 @@ using Dapper.Contrib.Extensions;
 
 namespace AspNetCore.Identity.Dapper.Repositories
 {
-    public class UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin> : RepositoryBase<TUser, TKey>
-        where TUser : IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin>
+    public class UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken> : RepositoryBase<TUser, TKey>
+        where TUser : IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin, TUserToken>
         where TKey : IEquatable<TKey>
     {
         public UserRepository(IConnectionFactory connectionFactory, ITableConfiguration configuration)

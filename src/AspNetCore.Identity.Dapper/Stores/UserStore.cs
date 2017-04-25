@@ -80,7 +80,7 @@ namespace AspNetCore.Identity.Dapper.Stores
 
     public abstract partial class UserStore<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken, TRoleClaim>
         where TKey : IEquatable<TKey>
-        where TUser : IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin>
+        where TUser : IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin, TUserToken>
         where TRole : IdentityRole<TKey, TUserRole, TRoleClaim>
         where TUserClaim : IdentityUserClaim<TKey>, new()
         where TUserRole : IdentityUserRole<TKey>, new()
@@ -88,7 +88,7 @@ namespace AspNetCore.Identity.Dapper.Stores
         where TUserToken : IdentityUserToken<TKey>, new()
         where TRoleClaim : IdentityRoleClaim<TKey>, new()
     {
-        private readonly UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin> _userRepository;
+        private readonly UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken> _userRepository;
         private readonly UserLoginRepository<TUserLogin, TKey> _userLoginRepository;
         private readonly UserTokenRepository<TUserToken, TKey> _userTokenRepository;
         private readonly UserClaimRepository<TUser, TUserClaim, TKey> _userClaimRepository;
@@ -99,21 +99,29 @@ namespace AspNetCore.Identity.Dapper.Stores
 
         public IdentityErrorDescriber ErrorDescriber { get; set; }
 
-        protected UserStore(ITableConfiguration context, IdentityErrorDescriber describer = null)
+        protected UserStore(
+            IConnectionFactory connectionFactory,
+            ITableConfiguration configuration,
+            IdentityErrorDescriber describer = null)
         {
-            if (context == null)
+            if (configuration == null)
             {
-                throw new ArgumentNullException(nameof(context));
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (connectionFactory == null)
+            {
+                throw new ArgumentNullException(nameof(connectionFactory));
             }
 
             ErrorDescriber = describer ?? new IdentityErrorDescriber();
 
-            _userRepository = new UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin>(context);
-            _userLoginRepository = new UserLoginRepository<TUserLogin, TKey>(context);
-            _userTokenRepository = new UserTokenRepository<TUserToken, TKey>(context);
-            _userClaimRepository = new UserClaimRepository<TUser, TUserClaim, TKey>(context);
-            _userRoleRepository = new UserRoleRepository<TUserRole, TKey>(context);
-            _roleRepository = new RoleRepository<TRole, TKey, TUserRole, TRoleClaim>(context);
+            _userRepository = new UserRepository<TUser, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken>(connectionFactory, configuration);
+            _userLoginRepository = new UserLoginRepository<TUserLogin, TKey>(connectionFactory, configuration);
+            _userTokenRepository = new UserTokenRepository<TUserToken, TKey>(connectionFactory, configuration);
+            _userClaimRepository = new UserClaimRepository<TUser, TUserClaim, TKey>(connectionFactory, configuration);
+            _userRoleRepository = new UserRoleRepository<TUserRole, TKey>(connectionFactory, configuration);
+            _roleRepository = new RoleRepository<TRole, TKey, TUserRole, TRoleClaim>(connectionFactory, configuration);
         }
 
         public virtual TKey ConvertIdFromString(string id)

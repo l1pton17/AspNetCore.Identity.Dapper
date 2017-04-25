@@ -17,13 +17,13 @@ namespace AspNetCore.Identity.Dapper.Entities
         }
     }
 
-    public class IdentityUser<TKey> : IdentityUser<TKey, IdentityUserClaim<TKey>, IdentityUserRole<TKey>, IdentityUserLogin<TKey>>
+    public class IdentityUser<TKey> : IdentityUser<TKey, IdentityUserClaim<TKey>, IdentityUserRole<TKey>, IdentityUserLogin<TKey>, IdentityUserToken<TKey>>
         where TKey : IEquatable<TKey>
     { }
 
 
     [Table(DefaultTableNames.Users)]
-    public class IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin>
+    public class IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin, TUserToken>
         where TKey : IEquatable<TKey>
     {
 
