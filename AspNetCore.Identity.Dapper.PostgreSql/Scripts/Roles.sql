@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [Roles] (
-	[Id]				TEXT NOT NULL,
-	[Name]				TEXT NOT NULL,
-	[NormalizedName]	TEXT NOT NULL,
-	[ConcurrencyStamp]	TEXT NULL
+	[Id]				VARCHAR(128) NOT NULL,
+	[Name]				VARCHAR(32) NOT NULL,
+	[NormalizedName]	VARCHAR(32) NOT NULL,
+	[ConcurrencyStamp]	VARCHAR(128) NULL
 );

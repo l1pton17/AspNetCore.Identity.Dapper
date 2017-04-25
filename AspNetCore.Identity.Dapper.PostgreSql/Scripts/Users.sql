@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [Users] (
-	[Id]					VARCHAR(256)	NOT NULL,
+	[Id]					VARCHAR(128)	NOT NULL,
 	[UserName]				VARCHAR(256)	NOT NULL,
 	[NormalizedUserName]	VARCHAR(256)	NOT NULL,
 	[Email]					VARCHAR(256)	NOT NULL,
@@ -7,7 +7,7 @@
 	[EmailConfirmed]		BOOLEAN			NOT NULL,
 	[PasswordHash]			TEXT,
 	[SecurityStamp]			TEXT,
-	[ConcurrencyStamp]		VARCHAR(256)	NOT NULL,
+	[ConcurrencyStamp]		VARCHAR(128)	NOT NULL,
 	[PhoneNumber]			TEXT,
 	[PhoneNumberConfirmed]	BOOLEAN			NOT NULL,
 	[TwoFactorEnabled]		BOOLEAN			NOT NULL,

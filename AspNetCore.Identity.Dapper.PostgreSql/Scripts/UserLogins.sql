@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [UserLogins](
-	[UserId]				TEXT	REFERENCES Users(Id)	NOT NULL,
-	[LoginProvider]			TEXT	NOT NULL,
-	[ProviderKey]			TEXT	NOT NULL,
-	[ProviderDisplayName]	TEXT	NOT NULL
+	[UserId] VARCHAR(128) REFERENCES Users(Id)	NOT NULL,
+	[LoginProvider] VARCHAR(32)	NOT NULL,
+	[ProviderKey] VARCHAR(64) NOT NULL,
+	[ProviderDisplayName] VARCHAR(32) NOT NULL
 );
