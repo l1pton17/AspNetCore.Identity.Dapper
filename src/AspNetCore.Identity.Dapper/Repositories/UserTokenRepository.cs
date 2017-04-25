@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using AspNetCore.Identity.Dapper.Entities;
 using Dapper;
 using Dapper.Contrib.Extensions;
 
@@ -11,8 +12,8 @@ namespace AspNetCore.Identity.Dapper.Repositories
         where TUserToken : IdentityUserToken<TKey>
         where TKey : IEquatable<TKey>
     {
-        public UserTokenRepository(IDapperContext context)
-            : base(context, context.UserTokensTableName)
+        public UserTokenRepository(IConnectionFactory connectionFactory, ITableConfiguration configuration)
+            : base(connectionFactory, configuration, configuration.UserTokensTableName)
         {
         }
 
@@ -20,7 +21,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
         {
             userToken.Value = value;
 
-            return Context.Connection.ExecuteAsync(
+            return Configuration.Connection.ExecuteAsync(
                 $@"UPDATE {TableName}
                    SET Value=@Value
                    WHERE UserId=@UserId AND LoginProvider=@LoginProvider AND Name=@Name",
@@ -35,12 +36,12 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task InsertAsync(TUserToken userToken)
         {
-            return Context.Connection.InsertAsync(userToken);
+            return Configuration.Connection.InsertAsync(userToken);
         }
 
         public Task<TUserToken> FindOrDefaultAsync(TKey userId, string loginProvider, string name)
         {
-            return Context.Connection.QueryFirstOrDefaultAsync<TUserToken>(
+            return Configuration.Connection.QueryFirstOrDefaultAsync<TUserToken>(
                 $@"SELECT *
                    FROM {TableName}
                    WHERE UserId=@UserId AND LoginProvider=@LoginProvider AND Name=@Name",
@@ -49,7 +50,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task DeleteAsync(TKey userId, string loginProvider, string name)
         {
-            return Context.Connection.ExecuteAsync(
+            return Configuration.Connection.ExecuteAsync(
                 $@"DELETE FROM {TableName}
                    WHERE UserId=@UserId AND LoginProvider=@LoginProvider AND Name=@Name",
                 new {UserId = userId, LoginProvider = loginProvider, Name = name});

@@ -2,7 +2,7 @@
 using AspNetCore.Identity.Dapper.Repositories;
 using Dapper.Contrib.Extensions;
 
-namespace AspNetCore.Identity.Dapper
+namespace AspNetCore.Identity.Dapper.Entities
 {
     [Table(DefaultTableNames.UserRoles)]
     public class IdentityUserRole<TKey>

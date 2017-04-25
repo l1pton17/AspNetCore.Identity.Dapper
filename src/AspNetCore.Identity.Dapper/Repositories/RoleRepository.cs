@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AspNetCore.Identity.Dapper.Entities;
 using Dapper;
 using Dapper.Contrib.Extensions;
 
@@ -11,19 +12,19 @@ namespace AspNetCore.Identity.Dapper.Repositories
         where TUserRole : IdentityUserRole<TKey>
         where TRoleClaim : IdentityRoleClaim<TKey>
     {
-        public RoleRepository(IDapperContext context)
-            : base(context, context.RolesTableName)
+        public RoleRepository(IConnectionFactory connectionFactory, ITableConfiguration configuration)
+            : base(connectionFactory, configuration, configuration.RolesTableName)
         {
         }
 
         public Task InsertAsync(TRole role)
         {
-            return Context.Connection.InsertAsync(role);
+            return Configuration.Connection.InsertAsync(role);
         }
 
         public Task DeleteAsync(TRole role)
         {
-            return Context.Connection.DeleteAsync(role);
+            return Configuration.Connection.DeleteAsync(role);
         }
 
         public Task<TRole> FindByNameAsync(string roleName)
@@ -43,7 +44,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task UpdateAsync(TRole role)
         {
-            return Context.Connection.UpdateAsync(role);
+            return Configuration.Connection.UpdateAsync(role);
         }
     }
 }

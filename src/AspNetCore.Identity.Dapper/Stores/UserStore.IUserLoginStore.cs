@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using System.Linq;
 
-namespace AspNetCore.Identity.Dapper
+namespace AspNetCore.Identity.Dapper.Stores
 {
     partial class UserStore<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken, TRoleClaim> : IUserLoginStore<TUser>
     {

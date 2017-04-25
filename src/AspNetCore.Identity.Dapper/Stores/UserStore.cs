@@ -1,31 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Security.Claims;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using AspNetCore.Identity.Dapper.Entities;
 using AspNetCore.Identity.Dapper.Repositories;
 using Microsoft.AspNetCore.Identity;
 
-namespace AspNetCore.Identity.Dapper
+namespace AspNetCore.Identity.Dapper.Stores
 {
     public class UserStore : UserStore<IdentityUser<string>>
     {
-        public UserStore(IDapperContext context, IdentityErrorDescriber describer = null) : base(context, describer) { }
+        public UserStore(ITableConfiguration context, IdentityErrorDescriber describer = null) : base(context, describer) { }
     }
 
     public class UserStore<TUser> : UserStore<TUser, IdentityRole, string>
         where TUser : IdentityUser<string>, new()
     {
-        public UserStore(IDapperContext context, IdentityErrorDescriber describer = null) : base(context, describer) { }
+        public UserStore(ITableConfiguration context, IdentityErrorDescriber describer = null) : base(context, describer) { }
     }
 
     public class UserStore<TUser, TRole> : UserStore<TUser, TRole, string>
         where TUser : IdentityUser<string>
         where TRole : IdentityRole<string>
     {
-        public UserStore(IDapperContext context, IdentityErrorDescriber describer = null) : base(context, describer)
+        public UserStore(ITableConfiguration context, IdentityErrorDescriber describer = null) : base(context, describer)
         {
         }
     }
@@ -36,7 +34,7 @@ namespace AspNetCore.Identity.Dapper
         where TRole : IdentityRole<TKey>
         where TKey : IEquatable<TKey>
     {
-        public UserStore(IDapperContext context, IdentityErrorDescriber describer = null)
+        public UserStore(ITableConfiguration context, IdentityErrorDescriber describer = null)
             : base(context, describer)
         { }
 
@@ -101,7 +99,7 @@ namespace AspNetCore.Identity.Dapper
 
         public IdentityErrorDescriber ErrorDescriber { get; set; }
 
-        protected UserStore(IDapperContext context, IdentityErrorDescriber describer = null)
+        protected UserStore(ITableConfiguration context, IdentityErrorDescriber describer = null)
         {
             if (context == null)
             {

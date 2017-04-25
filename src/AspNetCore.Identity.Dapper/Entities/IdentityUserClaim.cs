@@ -3,7 +3,7 @@ using System.Security.Claims;
 using AspNetCore.Identity.Dapper.Repositories;
 using Dapper.Contrib.Extensions;
 
-namespace AspNetCore.Identity.Dapper
+namespace AspNetCore.Identity.Dapper.Entities
 {
     [Table(DefaultTableNames.UserClaims)]
     public class IdentityUserClaim<TKey>

@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
+using AspNetCore.Identity.Dapper.Entities;
 using Dapper;
 using Dapper.Contrib.Extensions;
 
@@ -13,21 +14,21 @@ namespace AspNetCore.Identity.Dapper.Repositories
         where TUserClaim : IdentityUserClaim<TKey>
         where TKey: IEquatable<TKey>
     {
-        public UserClaimRepository(IDapperContext context)
-            : base(context, context.UserClaimsTableName)
+        public UserClaimRepository(IConnectionFactory connectionFactory, ITableConfiguration configuration)
+            : base(connectionFactory, configuration, configuration.UserClaimsTableName)
         {
         }
 
         public Task InsertManyAsync(IEnumerable<TUserClaim> userClaims)
         {
-            return Context.Connection.InsertAsync(userClaims);
+            return Configuration.Connection.InsertAsync(userClaims);
         }
 
         public Task<IEnumerable<TUser>> FindUsersForClaimAsync(Claim claim)
         {
-            return Context.Connection.QueryAsync<TUser>(
+            return Configuration.Connection.QueryAsync<TUser>(
                 $@"SELECT *
-                   FROM {Context.UsersTableName} users JOIN {TableName} userClaims
+                   FROM {Configuration.UsersTableName} users JOIN {TableName} userClaims
                         ON users.Id = userClaims.UserId
                    WHERE userClaims.ClaimValue = @ClaimValue AND userClaims.ClaimType = @ClaimType",
                 new {ClaimValue = claim.Value, ClaimType = claim.Type});
@@ -35,14 +36,14 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task<IEnumerable<TUserClaim>> FindAsync(TKey userId)
         {
-            return Context.Connection.QueryAsync<TUserClaim>(
+            return Configuration.Connection.QueryAsync<TUserClaim>(
                 $"SELECT * FROM {TableName} WHERE UserId=@UserId",
                 new {UserId = userId});
         }
 
         public Task UpdateAsync(TKey userId, Claim claim, Claim newClaim)
         {
-            return Context.Connection.ExecuteAsync(
+            return Configuration.Connection.ExecuteAsync(
                 $@"UPDATE {TableName}
                    SET ClaimValue=@NewClaimValue
                       ,ClaimType=@NewClaimType
@@ -59,7 +60,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task DeleteAsync(TKey userId, IEnumerable<Claim> claims)
         {
-            return Context.Connection.ExecuteAsync(
+            return Configuration.Connection.ExecuteAsync(
                 $@"DELETE FROM {TableName}
                    WHERE UserId=@UserId AND ClaimValue=@ClaimValue AND ClaimType=@ClaimType",
                 claims.Select(claim => new

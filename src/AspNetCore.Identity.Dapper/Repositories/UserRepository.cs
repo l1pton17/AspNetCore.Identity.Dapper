@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using AspNetCore.Identity.Dapper.Entities;
 using Dapper;
 using Dapper.Contrib.Extensions;
 
@@ -11,8 +12,8 @@ namespace AspNetCore.Identity.Dapper.Repositories
         where TUser : IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin>
         where TKey : IEquatable<TKey>
     {
-        public UserRepository(IDapperContext context)
-            : base(context, context.UsersTableName)
+        public UserRepository(IConnectionFactory connectionFactory, ITableConfiguration configuration)
+            : base(connectionFactory, configuration, configuration.UsersTableName)
         {
         }
 
@@ -109,7 +110,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task IncrementAccessFailedCountAsync(TKey id)
         {
-            return Context.Connection.ExecuteAsync(
+            return Configuration.Connection.ExecuteAsync(
                 $@"UPDATE {TableName}
                    SET AccessFailedCount = AccessFailedCount + 1
                    WHERE Id=@Id",
@@ -118,17 +119,17 @@ namespace AspNetCore.Identity.Dapper.Repositories
 
         public Task InsertAsync(TUser user)
         {
-            return Context.Connection.InsertAsync(user);
+            return Configuration.Connection.InsertAsync(user);
         }
 
         public Task UpdateAsync(TUser user)
         {
-            return Context.Connection.UpdateAsync(user);
+            return Configuration.Connection.UpdateAsync(user);
         }
 
         public Task DeleteAsync(TUser user)
         {
-            return Context.Connection.ExecuteAsync(
+            return Configuration.Connection.ExecuteAsync(
                 $"DELETE FROM {TableName} WHERE Id=@Id",
                 new {Id = user.Id});
         }
@@ -152,7 +153,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
         {
             string userRolesTableName = "UserRoles";
 
-            return Context.Connection.QueryAsync<TUser>(
+            return Configuration.Connection.QueryAsync<TUser>(
                 $@"SELECT users.*
                    FROM {TableName} users JOIN {userRolesTableName} userRoles
                         ON users.Id = userRoles.UserId

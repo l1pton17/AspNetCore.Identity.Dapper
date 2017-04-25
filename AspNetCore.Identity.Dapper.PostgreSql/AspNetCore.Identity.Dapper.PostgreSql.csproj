@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Scripts\Roles.sql" />
+    <Compile Include="Scripts\UserClaims.sql" />
+    <Compile Include="Scripts\UserLogins.sql" />
+    <Compile Include="Scripts\UserRoles.sql" />
+    <Compile Include="Scripts\UserTokens.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql" Version="3.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\AspNetCore.Identity.Dapper\AspNetCore.Identity.Dapper.csproj" />
+  </ItemGroup>
+
+</Project>

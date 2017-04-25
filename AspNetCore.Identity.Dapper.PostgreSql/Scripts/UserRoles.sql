@@ -1,0 +1,4 @@
+﻿CREATE TABLE [UserLogins](
+	[UserId]	VARCHAR(256)	REFERENCES Users(Id)	NOT NULL,
+	[RoleId]	VARCHAR(256)	REFERENCES Roles(Id)	NOT NULL
+);

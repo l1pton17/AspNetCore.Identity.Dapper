@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Text;
+using AspNetCore.Identity.Dapper.Entities;
 using Dapper.Contrib.Extensions;
 
 namespace AspNetCore.Identity.Dapper.Repositories
 {
-    public class DapperContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken> : IDapperContext
+    public class TableConfiguration<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken> : ITableConfiguration
         where TUser : IdentityUser<TKey, TUserClaim, TUserRole, TUserLogin>
         where TRole : IdentityRole<TKey, TUserRole, TRoleClaim>
         where TKey : IEquatable<TKey>
@@ -27,7 +28,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
         public string RolesTableName { get; }
         public string RoleClaimsTableName { get; }
 
-        public DapperContext(IDbConnection connection)
+        public TableConfiguration(IDbConnection connection)
         {
             Connection = connection;
 
@@ -40,7 +41,7 @@ namespace AspNetCore.Identity.Dapper.Repositories
             UserClaimsTableName = GetTableNameFromAttributeOrDefault<TUserClaim>() ?? DefaultTableNames.UserClaims;
         }
 
-        protected DapperContext()
+        protected TableConfiguration()
         { }
 
         private string GetTableNameFromAttributeOrDefault<TEntity>()

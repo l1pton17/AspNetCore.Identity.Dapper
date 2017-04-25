@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using AspNetCore.Identity.Dapper.Entities;
 using AspNetCore.Identity.Dapper.Repositories;
 using Microsoft.AspNetCore.Identity;
 
-namespace AspNetCore.Identity.Dapper
+namespace AspNetCore.Identity.Dapper.Stores
 {
     public partial class RoleStore<TRole, TKey, TUserRole, TRoleClaim>
         where TRole : IdentityRole<TKey, TUserRole, TRoleClaim>
@@ -19,7 +18,7 @@ namespace AspNetCore.Identity.Dapper
 
         public IdentityErrorDescriber ErrorDescriber { get; set; }
 
-        public RoleStore(IDapperContext context, IdentityErrorDescriber describer = null)
+        public RoleStore(ITableConfiguration context, IdentityErrorDescriber describer = null)
         {
             if (context == null)
             {

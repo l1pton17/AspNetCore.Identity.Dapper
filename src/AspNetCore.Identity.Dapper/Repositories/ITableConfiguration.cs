@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AspNetCore.Identity.Dapper.Repositories
 {
-    public interface IDapperContext
+    public interface ITableConfiguration
     {
         IDbConnection Connection { get; }
 
